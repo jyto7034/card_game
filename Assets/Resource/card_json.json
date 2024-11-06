@@ -9,7 +9,7 @@
       "text": "공격: 최강인 적에게 우울 상태를 부여합니다.",
       "tag": "Fear",
       "player_type": 1,
-      "count": 5
+      "count": 4
     },
     {
       "name": "벡스2",
@@ -20,7 +20,7 @@
       "text": "공격: 최강인 적에게 우울 상태를 부여합니다.",
       "tag": "Fear",
       "player_type": 0,
-      "count": 5
+      "count": 1
     }
   ]
 }

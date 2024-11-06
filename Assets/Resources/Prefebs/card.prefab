@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4254573241048519634}
   m_Layer: 0
   m_Name: Atk
-  m_TagString: Untagged
+  m_TagString: Card
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.016081955, y: 4.477652}
+  m_AnchoredPosition: {x: -0.016081955, y: 1.3238765}
   m_SizeDelta: {x: 0.5, y: 0.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &460422125708110083
@@ -185,7 +185,6 @@ GameObject:
   - component: {fileID: 3711632118614242879}
   - component: {fileID: 1612088247177490309}
   - component: {fileID: 1645612030663749831}
-  - component: {fileID: 1997546959728852704}
   m_Layer: 0
   m_Name: card
   m_TagString: Card
@@ -203,7 +202,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -22.254, y: -0.14, z: -23.472103}
-  m_LocalScale: {x: 4.97, y: 0.01, z: 6.4569583}
+  m_LocalScale: {x: 5, y: 0.01, z: 6.2620807}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8561995330052703030}
@@ -283,7 +282,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1.0000005, z: 1.0000005}
+  m_Size: {x: 1, y: 2.16, z: 1.0000005}
   m_Center: {x: 0, y: -0.0000009536748, z: 0.000003814698}
 --- !u!114 &1612088247177490309
 MonoBehaviour:
@@ -319,18 +318,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fd1a113165b3b54ab2a0d458122775e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1997546959728852704
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1935247025580410855}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae89cf514fc84829a2e708a28d807ad4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  event_config:
+    OnCardPlayed:
+      m_PersistentCalls:
+        m_Calls: []
+    OnCardHover:
+      m_PersistentCalls:
+        m_Calls: []
+    OnCardUnhover:
+      m_PersistentCalls:
+        m_Calls: []
+    OnCardDestroy:
+      m_PersistentCalls:
+        m_Calls: []
+  zoom_config:
+    zoomOnHover: 0
+    multiplier: 1
+    overrideYPosition: -1
+    defaultSortOrder: 0
+    bringToFrontOnHover: 0
+    zoomedSortOrder: 0
+    resetRotationOnZoom: 0
 --- !u!1 &2141887173488854704
 GameObject:
   m_ObjectHideFlags: 0
@@ -344,7 +352,7 @@ GameObject:
   - component: {fileID: 558469340979508596}
   m_Layer: 0
   m_Name: Name
-  m_TagString: Untagged
+  m_TagString: Card
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -365,7 +373,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.22338495, y: 4.4776516}
+  m_AnchoredPosition: {x: 0.22338495, y: 1.323876}
   m_SizeDelta: {x: 0.5, y: 0.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &1503020287895042448
@@ -514,7 +522,7 @@ GameObject:
   - component: {fileID: 7971488936268053249}
   m_Layer: 0
   m_Name: Img
-  m_TagString: Untagged
+  m_TagString: Card
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -528,7 +536,7 @@ Transform:
   m_GameObject: {fileID: 2426563118843463035}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0.00308421, y: 4.2537746, z: 0.14277679}
+  m_LocalPosition: {x: 0.00308421, y: 1.1, z: 0.14277679}
   m_LocalScale: {x: 0.110150374, y: 0.08478408, z: 111.94134}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -599,7 +607,7 @@ GameObject:
   - component: {fileID: 712346459343127092}
   m_Layer: 0
   m_Name: Desc
-  m_TagString: Untagged
+  m_TagString: Card
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -620,7 +628,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.21236992, y: 4.477652}
+  m_AnchoredPosition: {x: 0.21236992, y: 1.3238765}
   m_SizeDelta: {x: 0.5, y: 0.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &5713416271984379144
@@ -770,7 +778,7 @@ GameObject:
   - component: {fileID: 6888550061252184036}
   m_Layer: 0
   m_Name: Def
-  m_TagString: Untagged
+  m_TagString: Card
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -791,7 +799,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.44368568, y: 4.477652}
+  m_AnchoredPosition: {x: 0.44368568, y: 1.3238765}
   m_SizeDelta: {x: 0.5, y: 0.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &8984540412891675156
@@ -941,7 +949,7 @@ GameObject:
   - component: {fileID: 2851349570081375225}
   m_Layer: 0
   m_Name: Cost
-  m_TagString: Untagged
+  m_TagString: Card
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -962,7 +970,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.1511264, y: 4.4776454}
+  m_AnchoredPosition: {x: -0.1511264, y: 1.3238698}
   m_SizeDelta: {x: 0.5, y: 0.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &2391957919423006912
