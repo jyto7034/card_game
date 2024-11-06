@@ -19,7 +19,7 @@ namespace Network {
 
         void initialize() {
             // Do something . .
-            port = Utility.get_port();
+            // port = Utility.get_port();
             is_initialized = true;
         }
 
