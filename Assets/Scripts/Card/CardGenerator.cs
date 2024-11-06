@@ -51,7 +51,7 @@ namespace Card {
                     var targetList = card_data.player_type == 1 ? p1 : p2;
                     
                     var trans = GameObject.FindWithTag("Hand").transform;
-                    var card = Instantiate(cardPrefab, trans.position, Quaternion.Euler(90, 0, 0));
+                    var card = Instantiate(cardPrefab, trans.position, Quaternion.Euler(0, 0, 0));
                     card.SetActive(false);
                     
                     card.transform.Find("Desc").GetComponent<TMP_Text>().text = card_data.text;

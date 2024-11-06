@@ -16,6 +16,7 @@ namespace Card {
         private void Awake() {
             GameObject.FindWithTag("GameSystem").AddComponent<CardGenerator>();
             (player_cards, opponent_cards) = CardGenerator.create_card();
+            print(player_cards);
         }
 
         void set_origin_order(bool is_mine) {

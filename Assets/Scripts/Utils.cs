@@ -1,6 +1,49 @@
 using System;
 using UnityEngine;
 
+namespace Utils {
+    public static class DebugExtensions
+    {
+        // 여러 객체를 받아서 공백으로 구분하여 출력
+        public static void log(params object[] objects)
+        {
+            Debug.Log(string.Join(" ", objects));
+        }
+
+        // 구분자를 지정하여 출력
+        public static void log_with_separator(string separator, params object[] objects)
+        {
+            Debug.Log(string.Join(separator, objects));
+        }
+
+        // 레이블과 함께 출력
+        public static void log_with_label(string label, params object[] objects)
+        {
+            Debug.Log($"{label}: {string.Join(" ", objects)}");
+        }
+
+        // 컬러 지원
+        public static void log_with_color(Color color, params object[] objects)
+        {
+            Debug.Log($"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{string.Join(" ", objects)}</color>");
+        }
+
+        // 조건부 로깅
+        public static void log_with_if(bool condition, params object[] objects)
+        {
+            if (condition)
+                Debug.Log(string.Join(" ", objects));
+        }
+
+        // 포맷 지정 로깅
+        public static void log_with_format(string format, params object[] args)
+        {
+            Debug.Log(string.Format(format, args));
+        }
+    }
+    
+}
+
 public static class TransformExtensions
 {
     public static void With(
@@ -19,6 +62,16 @@ public static class TransformExtensions
             transform.localScale = scale.Value;
     }
 
+    public static void AddPosition(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
+    {
+        var currentPos = transform.position;
+        transform.position = new Vector3(
+            currentPos.x + (x ?? 0),
+            currentPos.y + (y ?? 0),
+            currentPos.z + (z ?? 0)
+        );
+    }
+    
     // General Funcs
     public static void WithPosition(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
     {
@@ -108,25 +161,6 @@ public static class Vector3Extensions
             original.z * z ?? original.z
         );
     }
-}
-
-public static class Utility {
-    public static int get_port() {
-        return 0;
-    }
-    
-    public static GameConfig get_game_config() {
-        return GameConfig.New();
-    }
-    
-    // public T GetComponent<T>() {
-    //     var type = typeof(T);
-    //
-    //     return type switch {
-    //         not null when type == typeof(Card) => (T)(object)card_component,
-    //         _ => throw new GameError("GetCompponent() Unknown Type")
-    //     };
-    // }
 }
 
 public class Option<T> {
