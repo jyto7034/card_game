@@ -18,10 +18,10 @@ namespace Animation {
     public class CardAnimation : MonoBehaviour {
         // Field 에 카드가 play 되는 애니메이션 함수
         public void place_to_field_slot(Card.Card card, int slot_id) {
-            var slot = Field.field_slots[slot_id];
+            var slot = Field.field_slots_tf[slot_id];
             var before = new TransformData(
                 new Vector3(slot.position.x + 0.05f, slot.position.y + 2f, slot.position.z), 
-                Constant.card_size_before_place_to_field,
+                card.transform.localScale * Constant.card_size_before_place_to_field,
                 Quaternion.Euler(0, slot.rotation.y, slot.rotation.z));
 
             var anim = new Animation();

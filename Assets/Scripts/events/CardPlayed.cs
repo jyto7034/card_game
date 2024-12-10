@@ -1,5 +1,5 @@
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
+using Zone;
 
 namespace events {
 
@@ -20,12 +20,12 @@ namespace events {
                     case "Field_Slot":
                         // field_slot 은 Field 스크립트가 부모 오브젝트에 있기 때문에 따로 처리 해줌.
                         var field_slot = _object.transform.parent;
-                        if (field_slot.TryGetComponent<Zone.Zone>(out var comp)) {
-                            Debug.Log(int.Parse(_object.transform.name) - 1);
-                            comp.add_card(card, int.Parse(_object.transform.name) - 1);
+                        if (field_slot.TryGetComponent<Field>(out var field_comp)) {
+                            field_comp.add_card(card, int.Parse(_object.transform.name) - 1);
                         }
                         break;
                     default:
+                        GameObject.FindGameObjectWithTag("Hand").GetComponent<Hand>().hide_cards(true);
                         break;
                 }
             }

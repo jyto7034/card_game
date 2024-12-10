@@ -54,4 +54,5 @@ public enum ZoneType {
     Deck,
     Graveyard,
     Field,
+    None,
 }

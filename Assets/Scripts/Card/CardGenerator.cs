@@ -1,72 +1,112 @@
-using System;
+using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
-using TMPro;
-using UnityEngine;
+using UnityEditor;
 
-namespace Card {
-    [System.Serializable]
-    public class CardJson {
-        public int player_type; 
-        public string name;
-        public string region;
-        public int attack;
-        public int health;
-        public int cost;
-        public string text;
-        public string tag;
-        public int count;
-    }
-    
-    [Serializable]
-    class Cards {
-        public List<CardJson> cards;
-    }
-    
-    public class CardGenerator : MonoBehaviour {
-        // player 와 opponent card json 따로 구분 해야함.
-        private const string json_path = "Assets/Resource/card_json.json";
-        private static GameObject cardPrefab;
-        
-        // card.json 을 읽어들여서 모든 카드 정보에 대해서 Card 객체를 생성함.
-        void Awake() {
-            cardPrefab = Resources.Load<GameObject>("Prefebs/card");
+[System.Serializable]
+public class CardJson {
+    public int player_type;
+    public int count;
+    public string name;
+}
+
+[System.Serializable]
+public class CardData {
+    public List<CardJson> cards;
+}
+
+public class CardGenerator : MonoBehaviour {
+    public static (List<GameObject>, List<GameObject>) CreateMaterialsAndApplyToPrefab(GameObject cardPrefab) {
+        List<GameObject> playerTypeZeroCards = new List<GameObject>();
+        List<GameObject> playerTypeOneCards = new List<GameObject>();
+
+        // JSON 파일 로드
+        TextAsset jsonFile = Resources.Load<TextAsset>("card_json");
+        if (jsonFile == null) {
+            Debug.LogError("Failed to load card_json file");
+            return (playerTypeZeroCards, playerTypeOneCards);
         }
 
-        private static Cards read_card_json() {
-            var json = File.ReadAllText(json_path);
-            // json 블럭들을 CardJson 객체로 생성.
-            return JsonConvert.DeserializeObject<Cards>(json);
+        CardData cardData = JsonUtility.FromJson<CardData>(jsonFile.text);
+
+        // PNG 이미지들을 Sprite로 변환
+#if UNITY_EDITOR
+        string imageFolderPath = "Assets/Resources/Images/card_img";
+        string[] pngFiles = System.IO.Directory.GetFiles(imageFolderPath, "*.png");
+
+        foreach (string pngPath in pngFiles) {
+            TextureImporter importer = AssetImporter.GetAtPath(pngPath) as TextureImporter;
+            if (importer != null) {
+                importer.textureType = TextureImporterType.Sprite;
+                importer.SaveAndReimport();
+            }
         }
-        
-        // 카드의 PlayerType 을 설정해야함.
-        public static (List<GameObject>, List<GameObject>) create_card() {
-            var p1 = new List<GameObject>();
-            var p2 = new List<GameObject>();
-            
-            foreach (var card_data in read_card_json().cards) {
-                var uuid = Guid.NewGuid();
-                while (card_data.count-- > 0) {
-                    var targetList = card_data.player_type == 1 ? p1 : p2;
-                    
-                    var trans = GameObject.FindWithTag("Hand").transform;
-                    var card = Instantiate(cardPrefab, trans.position, Quaternion.Euler(0, 0, 0));
-                    card.SetActive(false);
-                    
-                    card.transform.Find("Desc").GetComponent<TMP_Text>().text = card_data.text;
-                    card.transform.Find("Atk").GetComponent<TMP_Text>().text = card_data.attack.ToString();
-                    card.transform.Find("Def").GetComponent<TMP_Text>().text = card_data.health.ToString();
-                    card.transform.Find("Name").GetComponent<TMP_Text>().text = card_data.name;
-                    card.transform.Find("Cost").GetComponent<TMP_Text>().text = card_data.cost.ToString();
-                    card.GetComponent<Card>().uuid = uuid;
-                    card.transform.tag = "Card";
-                    
-                    targetList.Add(card);
-                } 
+#endif
+
+        int cardIndex = 0;
+        foreach (CardJson cardInfo in cardData.cards) {
+            // 각 카드에 해당하는 스프라이트 로드
+            string spritePath = $"Images/card_img/{cardInfo.name}";
+            Sprite cardSprite = Resources.Load<Sprite>(spritePath);
+
+            if (cardSprite == null) {
+                Debug.LogError($"Failed to load sprite for card: {cardInfo.name}");
+                continue;
             }
 
-            return (p1, p2);
+            // count만큼 카드 인스턴스 생성
+            for (int i = 0; i < cardInfo.count; i++) {
+                Material material = new Material(Shader.Find("Sprites/Default"));
+                material.mainTexture = cardSprite.texture;
+
+                // 텍스처의 알파 채널 사용 설정
+                material.SetFloat("_Mode", 2); // Transparent 모드
+                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                material.SetInt("_ZWrite", 0);
+                material.DisableKeyword("_ALPHATEST_ON");
+                material.EnableKeyword("_ALPHABLEND_ON");
+                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                material.renderQueue = 3000;
+
+                GameObject cardInstance = Instantiate(cardPrefab);
+                cardInstance.SetActive(false);
+                cardInstance.name = $"{cardInfo.name}_{i}";
+
+                // UV 좌표 반전
+                MeshFilter meshFilter = cardInstance.GetComponent<MeshFilter>();
+                if (meshFilter != null && meshFilter.mesh != null) {
+                    Mesh mesh = meshFilter.mesh;
+                    Vector2[] uvs = mesh.uv;
+                    for (int j = 0; j < uvs.Length; j++) {
+                        uvs[j].y = 1 - uvs[j].y; // Y축 반전
+                        uvs[j].x = 1 - uvs[j].x; // X축 반전
+                    }
+
+                    mesh.uv = uvs;
+                }
+
+                // 머테리얼 적용
+                MeshRenderer renderer = cardInstance.GetComponent<MeshRenderer>();
+                if (renderer != null) {
+                    renderer.material = material;
+                }
+
+                // player_type에 따라 리스트에 추가
+                if (cardInfo.player_type == 0) {
+                    playerTypeZeroCards.Add(cardInstance);
+                }
+                else {
+                    playerTypeOneCards.Add(cardInstance);
+                }
+            }
+
+            cardIndex++;
         }
+
+        Debug.Log($"Created Type 0 Cards: {playerTypeZeroCards.Count}");
+        Debug.Log($"Created Type 1 Cards: {playerTypeOneCards.Count}");
+
+        return (playerTypeZeroCards, playerTypeOneCards);
     }
 }

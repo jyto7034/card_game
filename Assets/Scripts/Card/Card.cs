@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 
 namespace Card { 
     public class Card : MonoBehaviour{
-        private ZoneType currendt_zone;
+        public ZoneType current_zone;
         
         [HideInInspector] 
         public Guid uuid;
@@ -32,6 +32,7 @@ namespace Card {
                 return;
             }
             is_hover = true;
+            GetComponent<MeshRenderer>().material.color = Color.yellow; 
             event_config?.OnCardHover?.Invoke(new CardHover(this));
         }
 
@@ -40,6 +41,11 @@ namespace Card {
                 return;
             }
             is_hover = false;
+            // TODO: 이렇게 new CardUnhover(this) 를 매 이벤트마다 호출하는건 성능 저하를 유발할 수 있음.
+            // 사실 그렇게 최적화 해야 할 사안은 아닌데, 숙지만 해두고
+            // 이벤트 유발 방식에 대해서 좀 검토해야 할 필요가 있어보임.
+            // 근데 일단, 이벤트의 근간이 되는 객체가 유일하지 않다는 점이 문제로 이루어질 수 있긴함.
+            GetComponent<MeshRenderer>().material.color = Color.white;
             event_config?.OnCardUnhover?.Invoke(new CardUnhover(this));
         }
         
@@ -48,29 +54,28 @@ namespace Card {
         }
 
         private void OnMouseDown() {
-            print("drag enter");
             event_config?.OnCardUnhover?.Invoke(new CardUnhover(this));
             is_dragged = true;
             var ray = Camera.main!.ScreenPointToRay(Input.mousePosition);
             var result = new RaycastHit[10];
             var size = Physics.RaycastNonAlloc(ray, result);
-
+            
             for (var i = 0; i < size; i++) {
                 var _object = result[i];
-
+            
                 if (!_object.collider.CompareTag("Card")) continue;
                 
                 var anim = new Animation.Animation();
-                var scale = new TransformData(_object.transform.position, Constant.card_size_while_movement,
+                var tfd = new TransformData(_object.transform.position, _object.transform.localScale * Constant.card_size_while_movement,
                     _object.transform.rotation);
-                anim.MoveTo(_object.transform.GetComponent<Card>(), scale, 0.1f);
+                anim.MoveTo(_object.transform.GetComponent<Card>(), tfd, 0.1f);
                 break;
             }
-
+            
             var screenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y,
                 GetMousePos(transform.position).z);
             var clickPosition = Camera.main!.ScreenToWorldPoint(screenPoint);
-
+            
             var target_position = new Vector3(clickPosition.x, transform.position.y, clickPosition.z);
             mousePosition = Input.mousePosition - GetMousePos(target_position);
         }
@@ -93,6 +98,8 @@ namespace Card {
             var tiltZ = Mathf.Clamp(movement.x * maxTilt * tiltFactor, -maxTilt, maxTilt);
 
             transform.rotation = Quaternion.Euler(tiltX, 0, tiltZ);
+            
+            transform.WithPosition(y: Constant.card_y_position_while_drag);
             
             lastPosition = transform.position;
             
