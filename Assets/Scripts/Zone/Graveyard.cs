@@ -6,11 +6,11 @@ namespace Zone {
             throw new System.NotImplementedException();
         }
 
-        public override void remove_card(GameObject card) {
+        public override bool remove_card(Card.Card card) {
             throw new System.NotImplementedException();
         }
 
-        public override void pull_card(GameObject card, ZoneType zone_type) {
+        public override void pull_card(Card.Card card, ZoneType zone_type) {
             throw new System.NotImplementedException();
         }
     }

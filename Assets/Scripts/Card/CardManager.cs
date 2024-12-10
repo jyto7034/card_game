@@ -6,6 +6,8 @@ namespace Card {
     public class CardManager : MonoBehaviour {
         [HideInInspector] public static List<GameObject> player_cards;
         [HideInInspector] public static List<GameObject> opponent_cards;
+        [SerializeField]
+        private GameObject cardPrefab;
 
         // Awake 와 Start 함수 의존성 잘 확인해야함.
         // 아마 고루틴 쓰는게 편할듯.
@@ -14,9 +16,7 @@ namespace Card {
         // Coroutine: Coroutine을 사용하여 의존적인 오브젝트가 생성될 때까지 기다립니다.
         // 이벤트 시스템: 의존적인 오브젝트가 생성될 때 이벤트를 발생시키고 이를 구독하여 처리합니다.
         private void Awake() {
-            GameObject.FindWithTag("GameSystem").AddComponent<CardGenerator>();
-            (player_cards, opponent_cards) = CardGenerator.create_card();
-            print(player_cards);
+            (player_cards, opponent_cards) = CardGenerator.CreateMaterialsAndApplyToPrefab(cardPrefab);
         }
 
         void set_origin_order(bool is_mine) {

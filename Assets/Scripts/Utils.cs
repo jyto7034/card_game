@@ -1,7 +1,41 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Zone;
+using Object = UnityEngine.Object;
 
 namespace Utils {
+    public static class Utils {
+        private static readonly Dictionary<ZoneType, Zone.Zone> zoneCache = new();
+
+        public static void transfer_to_zone(Card.Card card, ZoneType target_zone) {
+            get_zone(card.current_zone).remove_card(card);
+            get_zone(target_zone).add_card(card);
+        }
+        
+        public static Zone.Zone get_zone(ZoneType type) {
+            // 캐시에 있으면 반환
+            if (zoneCache.TryGetValue(type, out var zone1))
+                return zone1;
+            
+            // 캐시에 없으면 찾아서 저장
+            Zone.Zone zone = type switch {
+                ZoneType.Hand => Object.FindObjectOfType<Hand>(),
+                ZoneType.Deck => Object.FindObjectOfType<Deck>(),
+                ZoneType.Graveyard => Object.FindObjectOfType<Graveyard>(),
+                ZoneType.Field => Object.FindObjectOfType<Field>(),
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
+
+            if (zone != null)
+                zoneCache[type] = zone;
+            else
+                Debug.LogWarning($"Zone of type {type} not found!");
+            
+            return zone;
+        }
+    }
+    
     public static class DebugExtensions
     {
         // 여러 객체를 받아서 공백으로 구분하여 출력
@@ -46,22 +80,6 @@ namespace Utils {
 
 public static class TransformExtensions
 {
-    public static void With(
-        this UnityEngine.Transform transform,
-        Vector3? position = null,
-        Vector3? rotation = null,
-        Vector3? scale = null)
-    {
-        if (position.HasValue)
-            transform.position = position.Value;
-
-        if (rotation.HasValue)
-            transform.eulerAngles = rotation.Value;
-
-        if (scale.HasValue)
-            transform.localScale = scale.Value;
-    }
-
     public static void AddPosition(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
     {
         var currentPos = transform.position;
@@ -72,10 +90,34 @@ public static class TransformExtensions
         );
     }
     
-    // General Funcs
+    public static void AddLocalPosition(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
+    {
+        var currentPos = transform.localPosition;
+        transform.localPosition = new Vector3(
+            currentPos.x + (x ?? 0),
+            currentPos.y + (y ?? 0),
+            currentPos.z + (z ?? 0)
+        );
+    }
+    
     public static void WithPosition(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
     {
         transform.position = transform.position.With(x, y, z);
+    }
+
+    public static Vector3 AddPositionRet(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
+    {
+        return new Vector3(
+            transform.position.x + (x ?? 0),
+            transform.position.y + (y ?? 0),
+            transform.position.z + (z ?? 0)
+        );
+    }
+    
+    
+    public static void WithLocalPosition(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
+    {
+        transform.localPosition = transform.localPosition.With(x, y, z);
     }
 
     public static void WithRotation(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
@@ -87,59 +129,6 @@ public static class TransformExtensions
     public static void WithScale(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
     {
         transform.localScale = transform.localScale.With(x, y, z);
-    }
-    
-    
-    // Ret Funcs
-    public static Vector3 WithPositionRet(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
-    {
-        return transform.position.With(x, y, z);
-    }
-
-    public static Vector3 WithRotationRet(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
-    {
-        Vector3 currentRotation = transform.eulerAngles;
-        return currentRotation.With(x, y, z);
-    }
-
-    public static Vector3 WithScaleRet(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
-    {
-        return transform.localScale.With(x, y, z);
-    }
-    
-    
-    // Mul Funcs
-    public static void WithPositionMul(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
-    {
-        transform.position = transform.position.WithMul(x, y, z);
-    }
-
-    public static void WithRotationMul(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
-    {
-        Vector3 currentRotation = transform.eulerAngles;
-        transform.eulerAngles = currentRotation.WithMul(x, y, z);
-    }
-
-    public static void WithScaleMul(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
-    {
-        transform.localScale = transform.localScale.WithMul(x, y, z);
-    }
-    
-    // Mul Ret Funcs
-    public static Vector3 WithPositionMulRet(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
-    {
-        return transform.position.WithMul(x, y, z);
-    }
-
-    public static Vector3 WithRotationMulRet(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
-    {
-        Vector3 currentRotation = transform.eulerAngles;
-        return currentRotation.WithMul(x, y, z);
-    }
-
-    public static Vector3 WithScaleMulRet(this UnityEngine.Transform transform, float? x = null, float? y = null, float? z = null)
-    {
-        return transform.localScale.WithMul(x, y, z);
     }
 }
 
